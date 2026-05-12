@@ -4,11 +4,11 @@
 
 ### 1. 파이썬 3.12.9(Feb.4,2025) 설치 
 
-1. 공식 홈페이지 : https://www.python.org/downloads/release/python-3129/ (Windows용 Installer 다운로드)
+#### 1. 공식 홈페이지 : https://www.python.org/downloads/release/python-3129/ (Windows용 Installer 다운로드)
 
     ⚠️ 주의사항 : 설치 초기 화면 하단의 **Add Python.exe to PATH** 옵션을 반드시 체크하세요.
 
-2. 설치 확인: 명령 프롬프트(CMD)에서 아래 명령어 입력
+#### 2. 설치 확인: 명령 프롬프트(CMD)에서 아래 명령어 입력
 
 ```bash
 py -3.12 --version
@@ -16,29 +16,29 @@ py -3.12 --version
 
 ### 2. visual Studio Build Tools 설치 
 
-1. 워크로드 : **C++를 사용한 데스크톱 개발** 선택
+#### 1. 워크로드 : C++를 사용한 데스크톱 개발 선택
 
-2. 개발 옵션 (필수) : 
+#### 2. 개발 옵션 (필수) : 
 
-    \- **MSVC v14x - VS 2022 C++ x64/x86 빌드 도구**
+##### **MSVC v14x - VS 2022 C++ x64/x86 빌드 도구**
 
-    \- **Windows 10(또는 11) SDK**
+##### **Windows 10(또는 11) SDK**
 
-3. 설치 완료 후 반드시 **다시 시작** 
+### 3. 설치 완료 후 반드시 **다시 시작** 
 
 ### 3. OLLAMA 및 LLM 모델 설치
 
-1. 공식 홈페이지 : https://ollama.com/download (Download for Windows)
+#### 1. 공식 홈페이지 : https://ollama.com/download (Download for Windows)
 
-2. LLM 모델 설치 (CMD)
+#### 2. LLM 모델 설치 (CMD)
 
-\- **답변 생성 모델** 
+##### \- 답변 생성 모델
 
 ```bash
 ollama run hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4\_K\_M
 ```
 
-\- **임베딩 모델**
+##### \- 임베딩 모델
 
 ```bash
 ollama pull mxbai-embed-large
@@ -48,37 +48,37 @@ ollama pull mxbai-embed-large
 
 ### 4. 프로젝트 가상환경 설정 (CMD)
 
-1. cd 명령어로 프로젝트 폴더 위치로 가기 
+#### 1. cd 명령어로 프로젝트 폴더 위치로 가기 
 
-2. 가상환경 생성 
+#### 2. 가상환경 생성 
 
 ```bash
 py -3.12 -m venv venv
 ```
 
-3. 가상환경 활성화 
+#### 3. 가상환경 활성화 
 
 ```bash
 .\venv\Scripts\activate
 ```
 
-4. pip 최신 업데이트 (오류 방지용)
+#### 4. pip 최신 업데이트 (오류 방지용)
 
 ```bash
 python -m pip install --upgrade pip
 ```
 
-5. 패키지 설치
+#### 5. 패키지 설치
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. 실행 방법 (CMD)
+#### 5. 실행 방법 (CMD)
 
-1. 프로젝트 폴더 내에서 **run.bat** 파일 실행
+##### 1. 프로젝트 폴더 내에서 **run.bat** 파일 실행
 
-2. 터미널에 출력되는 **로컬 주소**(예: http://127.0.0.1:xxxx) 를 브라우저에 입력하여 접속
+##### 2. 터미널에 출력되는 **로컬 주소**(예: http://127.0.0.1:xxxx) 를 브라우저에 입력하여 접속
 
 
 
