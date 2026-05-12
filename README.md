@@ -28,19 +28,19 @@
 
 2. LLM 모델 설치 (cmd)
 
-    \- 답변 생성 모델 
+   \- 답변 생성 모델 
 
 ```bash
 ollama run hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4\_K\_M
 ```
 
-    \- 임베딩 모델
+   \- 임베딩 모델
 
 ```bash
 ollama pull mxbai-embed-large
 ```
 
-    💡 Tip : 설치 완료 후 자동으로 채팅창이 열리면 **/bye**를 통해 종료할 수 있음
+💡 Tip : 설치 완료 후 자동으로 채팅창이 열리면 **/bye**를 통해 종료할 수 있음
 
 ### 4. 프로젝트 가상환경 설정 (cmd)
 
