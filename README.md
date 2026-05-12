@@ -29,10 +29,13 @@
 2) LLM 모델 설치 (cmd)
 
 \- 답변 생성 모델 
+
 ```bash
 ollama run hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4\_K\_M```
 
+
 \- 임베딩 모델
+
 ```bash
 ollama pull mxbai-embed-large```
 
@@ -43,18 +46,22 @@ ollama pull mxbai-embed-large```
 1) cd 명령어로 프로젝트 폴더 위치로 가기 
 
 2) 가상환경 생성 
+
 '''bash
  py -3.12 -m venv venv'''
 
 3) 가상환경 활성화 
+
 '''bash
 .\venv\Scripts\activate'''
 
 4) pip 최신 업데이트 (오류 방지용)
+
 '''bash
 python -m pip install --upgrade pip''' 
 
 5) 패키지 설치
+
 '''bash
 pip install -r requirements.txt''' 
 
