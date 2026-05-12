@@ -6,9 +6,13 @@
 
 1. 공식 홈페이지 : https://www.python.org/downloads/release/python-3129/ (Windows용 Installer 다운로드)
 
-⚠️ 주의사항 : 설치 초기 화면 하단의 **Add Python.exe to PATH** 옵션을 반드시 체크하세요.
+    ⚠️ 주의사항 : 설치 초기 화면 하단의 **Add Python.exe to PATH** 옵션을 반드시 체크하세요.
 
-2. 설치 확인: 명령 프롬프트(CMD)에서 **py -3.12 --version** 명령어 입력
+2. 설치 확인: 명령 프롬프트(cmd)에서 아래 명령어 입력
+
+```bash
+py -3.12 --version
+```
 
 ### 2. visual Studio Build Tools 설치 
 
@@ -40,7 +44,7 @@ ollama run hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4\_K\_M
 ollama pull mxbai-embed-large
 ```
 
-💡 Tip : 설치 완료 후 자동으로 채팅창이 열리면 **/bye**를 통해 종료할 수 있음
+    💡 Tip : 설치 완료 후 자동으로 채팅창이 열리면 **/bye**를 통해 종료할 수 있음
 
 ### 4. 프로젝트 가상환경 설정 (cmd)
 
