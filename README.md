@@ -50,27 +50,25 @@ ollama pull mxbai-embed-large
 
 ### 4. 프로젝트 가상환경 설정 (CMD)
 
-#### 1. cd 명령어로 프로젝트 폴더 위치로 가기 
-
-#### 2. 가상환경 생성 
+#### 1. 가상환경 생성 (프로젝트 폴더 위에서 생성)
 
 ```bash
 py -3.12 -m venv venv
 ```
 
-#### 3. 가상환경 활성화 
+#### 2. 가상환경 활성화 
 
 ```bash
 .\venv\Scripts\activate
 ```
 
-#### 4. pip 최신 업데이트 (오류 방지용)
+#### 3. pip 최신 업데이트 (오류 방지용)
 
 ```bash
 python -m pip install --upgrade pip
 ```
 
-#### 5. 패키지 설치
+#### 4. 패키지 설치
 
 ```bash
 pip install -r requirements.txt
