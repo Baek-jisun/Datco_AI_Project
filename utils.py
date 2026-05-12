@@ -2,11 +2,10 @@ import os
 import re
 from config import UPLOAD_DIR
 
-def clean_text(text):
-    text = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', text)
-    text = re.sub(r'\n+', '\n', text)
-    text = re.sub(r' +', ' ', text)
-    return text.strip()
+def clean_text(text: str) -> str:
+    text = re.sub(r'\n+', ' ', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
 
 def get_total_size_mb() -> float:
     total_size = 0
