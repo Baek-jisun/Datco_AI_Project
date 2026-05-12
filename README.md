@@ -14,11 +14,13 @@
 py -3.12 --version
 ```
 
-### 2. visual Studio Build Tools 설치 
+### 2. visual Studio Build Tools 설치  
 
-#### 1. 워크로드 : C++를 사용한 데스크톱 개발 선택
+#### 1. 공식 홈페이지 : https://visualstudio.microsoft.com/ko/downloads/ (하단에 Visual Studio 2026용 빌드 도구 다운로드)
 
-#### 2. 개발 옵션 (필수) : 
+#### 2. 워크로드 : C++를 사용한 데스크톱 개발 선택
+
+#### 3. 개발 옵션 (필수) : 
 
 ##### \- MSVC v14x - VS 2022 C++ x64/x86 빌드 도구
 
@@ -35,7 +37,7 @@ py -3.12 --version
 ##### \- 답변 생성 모델
 
 ```bash
-ollama run hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4\_K\_M
+ollama run hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4_K_M
 ```
 
 ##### \- 임베딩 모델
