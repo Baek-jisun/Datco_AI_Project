@@ -1,9 +1,8 @@
 import json
 import os
-import uuid  
 from langchain_ollama import ChatOllama
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from config import MODEL_NAME, SOURCE_DIR 
+from config import MODEL_NAME
 from engine import rag_engine
 from prompts import get_qa_prompt
 
@@ -11,61 +10,76 @@ async def stream_answer(query: str, history):
     if rag_engine.compression_retriever is None:
         rag_engine.setup_engine()
     
-    if not rag_engine.compression_retriever:
-        yield f"data: {json.dumps({'type': 'content', 'delta': '업로드된 문서가 없습니다.'})}\n\n"
-        yield "data: [DONE]\n\n"
-        return
-
-    llm = ChatOllama(model=MODEL_NAME, temperature=0, streaming=True)
+    llm = ChatOllama(model=MODEL_NAME, temperature=0.02, streaming=True)
 
     retrieved_docs = rag_engine.compression_retriever.invoke(query)
-    filtered_docs = [] 
     
-    if retrieved_docs:
-        first_doc = retrieved_docs[0]
-        filtered_docs.append(first_doc)
-        first_file = os.path.basename(first_doc.metadata.get('source', ''))
-        for doc in retrieved_docs[1:4]:
-            curr_file = os.path.basename(doc.metadata.get('source', ''))
-            if curr_file == first_file or len(filtered_docs) < 2:
-                filtered_docs.append(doc)
+    filtered_docs = retrieved_docs[:12] if retrieved_docs else []
 
-    if not filtered_docs:
-        yield f"data: {json.dumps({'type': 'content', 'delta': '문서에서 확인 불가'})}\n\n"
-        yield "data: [DONE]\n\n"
-        return
+    print(f"\n{'='*85}\n[STEP 1] 엔진 검색 후보군 (TOP {len(filtered_docs)})")
+    for i, doc in enumerate(filtered_docs, 1):
+        fname = os.path.basename(doc.metadata.get('source', 'unknown'))
+        page = doc.metadata.get('page', 0) + 1
+        print(f"  {i:>2}순위: {fname:<40} (p.{page})")
+    print(f"{'='*85}")
 
     chain = create_stuff_documents_chain(llm, get_qa_prompt())
     full_response = ""
-    async for chunk in chain.astream({"input": query, "chat_history": history.messages, "context": filtered_docs}):
+    
+    async for chunk in chain.astream({
+        "input": query, 
+        "chat_history": history.messages, 
+        "context": filtered_docs
+    }):
         yield f"data: {json.dumps({'type': 'content', 'delta': chunk})}\n\n"
         full_response += chunk
 
-    stop_keywords = ["확인 불가", "정보 없음", "내용 없음", "찾을 수 없습니다"]
-    if not any(keyword in full_response for keyword in stop_keywords):
-        seen = set()
-        sources = []
-        
-        memo_content = f"질문: {query}\n\n"
-        memo_content += f"AI 답변:\n{full_response}\n\n"
-        memo_content += "="*50 + "\n[참조 근거 원문]\n"
+    temp_sources = []
+    seen = set()
+    THRESHOLD = 0.12 
+    response_words = set([w for w in full_response.split() if len(w) >= 2])
 
-        for d in filtered_docs:
-            p = d.metadata.get('page', 0) + 1
-            f = os.path.basename(d.metadata.get('source', ''))
-            if f"{f}_{p}" not in seen:
-                sources.append({"file": f, "page": p, "snippet": d.page_content[:150] + "..."})
-                memo_content += f"\n▶ 출처: {f} (p.{p})\n"
-                memo_content += f"내용: {d.page_content.strip()}\n"
-                memo_content += "-"*30 + "\n"
-                seen.add(f"{f}_{p}")
-
-        file_name = f"memo_{uuid.uuid4().hex[:8]}.txt"
-        file_path = os.path.join(SOURCE_DIR, file_name)
-        
-        with open(file_path, "w", encoding="utf-8") as f_out:
-            f_out.write(memo_content)
-
-        yield f"data: {json.dumps({'type': 'sources', 'data': sources, 'download_url': file_name})}\n\n"
+    print(f"\n[STEP 2] 하이브리드 가중치 정렬 분석 (Threshold: {THRESHOLD})")
+    print(f"{'-'*85}")
     
+    for i, d in enumerate(filtered_docs, 1):
+        p = d.metadata.get('page', 0) + 1
+        f = os.path.basename(d.metadata.get('source', ''))
+        content_words = [w for w in d.page_content.split() if len(w) >= 2]
+        if not content_words: continue
+        
+        match_count = sum(1 for w in content_words if w in response_words)
+        match_density = match_count / len(content_words)
+        
+        search_rank_score = (len(filtered_docs) - i + 1) / len(filtered_docs)
+        
+        final_score = (search_rank_score * 0.4) + (match_density * 0.6)
+
+        status = "✅ PASS" if match_density >= THRESHOLD else "❌ DROP"
+        print(f"{status:^8} | {f[:30]:<35} (p.{p}) | 밀도:{match_density:.4f} | 보정점수:{final_score:.4f}")
+
+        if match_density >= THRESHOLD and f"{f}_{p}" not in seen:
+            temp_sources.append({
+                "file": f, 
+                "page": p, 
+                "score": final_score,
+                "snippet": d.page_content[:150].replace('\n', ' ') + "..."
+            })
+            seen.add(f"{f}_{p}")
+    
+    temp_sources.sort(key=lambda x: x['score'], reverse=True)
+
+    sources = [
+        {"file": s['file'], "page": s['page'], "snippet": s['snippet']} 
+        for s in temp_sources
+    ]
+    
+    print(f"{'-'*85}")
+    print(f"최종 하이브리드 정렬 완료: {len(sources)}건 리스트업")
+    print(f"{'-'*85}\n")
+
+    history.add_user_message(query)
+    history.add_ai_message(full_response)
+    
+    yield f"data: {json.dumps({'type': 'sources', 'data': sources})}\n\n"
     yield "data: [DONE]\n\n"
