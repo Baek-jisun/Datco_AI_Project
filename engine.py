@@ -1,5 +1,6 @@
 import os
-from langchain_community.document_loaders import PyPDFLoader
+import pdfplumber
+from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
@@ -21,16 +22,31 @@ class RAGEngine:
         all_docs = []
         for filename in os.listdir(UPLOAD_DIR):
             if filename.endswith(".pdf"):
-                loader = PyPDFLoader(os.path.join(UPLOAD_DIR, filename))
-                docs = loader.load()
-                for doc in docs:
-                    doc.page_content = clean_text(doc.page_content)
-                
-                splitter = RecursiveCharacterTextSplitter(chunk_size=700, chunk_overlap=150)
-                all_docs.extend(splitter.split_documents(docs))
-        
+                file_path = os.path.join(UPLOAD_DIR, filename)
+                try:
+                    with pdfplumber.open(file_path) as pdf:
+                        for i, page in enumerate(pdf.pages):
+                            text = page.extract_text()
+                            if text:
+                                cleaned_content = clean_text(text)
+                                all_docs.append(Document(
+                                    page_content=cleaned_content,
+                                    metadata={"source": filename, "page": i}
+                                ))
+                    print(f"✅ {filename} 로드 완료")
+                except Exception as e:
+                    print(f"❌ {filename} 로드 실패: {str(e)}")
+                    continue
+
         if not all_docs:
             return None
+        
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=800, 
+            chunk_overlap=200, 
+            separators=["\n\n", "\n", ".", " ", ""]
+        )
+        split_docs = splitter.split_documents(all_docs)
         
         vectorstore = Chroma(
             persist_directory=DB_PATH, 
@@ -38,15 +54,21 @@ class RAGEngine:
             client_settings=Settings(is_persistent=True, anonymized_telemetry=False)
         )
         
-        bm25 = BM25Retriever.from_documents(all_docs)
+        bm25 = BM25Retriever.from_documents(split_docs)
+        bm25.k = 15 
+        
         vector_r = vectorstore.as_retriever(
-            search_type="similarity", 
-            search_kwargs={"k": 6} 
+            search_type="mmr", 
+            search_kwargs={
+                "k": 15, 
+                "fetch_k": 40, 
+                "lambda_mult": 0.7
+            }
         )
 
         self.compression_retriever = EnsembleRetriever(
             retrievers=[bm25, vector_r], 
-            weights=[0.3, 0.7]
+            weights=[0.55, 0.45] 
         )
         return self.compression_retriever
 
