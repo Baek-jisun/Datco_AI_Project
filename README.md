@@ -30,18 +30,15 @@
 
 \- 답변 생성 모델 
 
-
 ```bash
-ollama run hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4\_K\_M```
-
-
+ollama run hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4\_K\_M
+```
 
 \- 임베딩 모델
 
-
 ```bash
-ollama pull mxbai-embed-large```
-
+ollama pull mxbai-embed-large
+```
 
 💡 Tip : 설치 완료 후 자동으로 채팅창이 열리면 **/bye**를 통해 종료할 수 있음
 
@@ -51,31 +48,27 @@ ollama pull mxbai-embed-large```
 
 2) 가상환경 생성 
 
-
 ```bash
- py -3.12 -m venv venv```
-
+py -3.12 -m venv venv
+```
 
 3) 가상환경 활성화 
 
-
 ```bash
-.\venv\Scripts\activate```
-
+.\venv\Scripts\activate
+```
 
 4) pip 최신 업데이트 (오류 방지용)
 
-
 ```bash
-python -m pip install --upgrade pip```
-
+python -m pip install --upgrade pip
+```
 
 5) 패키지 설치
 
-
 ```bash
-pip install -r requirements.txt```
-
+pip install -r requirements.txt
+```
 
 ### 5. 실행 방법 (cmd)
 
