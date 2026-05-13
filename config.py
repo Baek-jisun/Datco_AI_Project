@@ -1,6 +1,5 @@
 import os
 
-# 환경 설정
 os.environ["ANONYMIZED_TELEMETRY"] = "False"
 
 MODEL_NAME = "hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4_K_M"

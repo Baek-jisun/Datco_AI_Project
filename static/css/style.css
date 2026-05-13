@@ -75,35 +75,22 @@ body { font-family: 'Pretendard', sans-serif; margin: 0; display: flex; height: 
     margin-bottom: 0.5rem; padding: 0 ; line-height: 1.4 ; display: block ;
 }
 
-/* 다운로드 버튼 스타일 (수정됨) */
-.download-btn-hidden {
-    display: none;
-}
+/* Download Button */
+.download-btn-hidden {display: none;}
 .download-btn-visible {
-    display: block;
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #ffffff;
-    border: 1px solid #cecdcd;
-    color: #555;
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    transition: all 0.2s ease;
+    display: block; position: absolute; top: 15px; right: 15px; background: #ffffff;
+    border: 1px solid #cecdcd; color: #555; padding: 5px 10px;
+    border-radius: 8px; font-size: 0.75rem; font-weight: 600; cursor: pointer;
+    z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s ease;
 }
-.download-btn-visible:hover {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-}
+
+.download-btn-visible:hover {background: var(--accent); color: white; border-color: var(--accent);}
 
 /* Viewer */
 .viewer-panel { width: 0; background: #525659; position: relative; transition: 0.3s ease-in-out; }
 .viewer-panel.open { width: 70%; }
-.close-btn { position: absolute; top: 1px; left: 1px; width: 30px; height: 30px; background: var(--danger); color: white; border-radius: 50%; border: none; cursor: pointer; z-index: 10; }
+.close-btn { 
+    position: absolute; top: 1px; left: 1px; width: 30px; height: 30px; background: var(--danger); 
+    color: white; border-radius: 50%; border: none; cursor: pointer; z-index: 10; 
+}
 iframe { width: 100%; height: 100%; border: none; }

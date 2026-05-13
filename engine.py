@@ -13,7 +13,6 @@ from utils import clean_text
 class RAGEngine:
     def __init__(self):
         self.compression_retriever = None
-        # [수정] 사용자님 환경에 맞는 전용 임베딩 모델로 고정
         self.embeddings = OllamaEmbeddings(model="mxbai-embed-large")
 
     def setup_engine(self):
@@ -50,7 +49,6 @@ class RAGEngine:
             client_settings=Settings(is_persistent=True, anonymized_telemetry=False)
         )
         
-        # [수정] 사용자님의 강력한 앙상블 검색 설정 복구
         bm25 = BM25Retriever.from_documents(split_docs)
         bm25.k = 15 
         
