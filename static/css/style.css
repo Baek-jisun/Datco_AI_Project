@@ -35,7 +35,7 @@ body { font-family: 'Pretendard', sans-serif; margin: 0; display: flex; height: 
 #welcomeMsg h2 {margin-bottom: 10px; font-size: 1.5rem;}
 #welcomeMsg p {font-size: 1rem; opacity: 0.8;}
 
-/* Input Area (Modified) */
+/* Input Area */
 .input-area { padding: 30px 10%; border-top: 1px solid #cecdcd; background: var(--main-bg); }
 .input-container {position: relative; display: flex; align-items: center; width: 100%;}
 #questionInput {
@@ -54,7 +54,10 @@ body { font-family: 'Pretendard', sans-serif; margin: 0; display: flex; height: 
 #loading { display: none; color: var(--accent); font-size: 0.9rem; margin-top: 12px; margin-left: 5px; font-weight: 500;}
 
 /* Answer Box & Sources */
-.answer-box { background: var(--chat-bg); padding: 24px; border-radius: 16px; border: 1px solid #e5e5e5; line-height: 1.7; }
+.answer-box { 
+    background: var(--chat-bg); padding: 24px; border-radius: 16px; border: 1px solid #e5e5e5; 
+    line-height: 1.7; position: relative; /* 버튼 배치를 위해 추가 */
+}
 .source-container { margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px; display: flex; flex-direction: column; gap: 10px; }
 .source-item { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; cursor: pointer; transition: 0.2s; }
 .source-item:hover { border-color: var(--accent); background: #f0f7ff; }
@@ -71,7 +74,33 @@ body { font-family: 'Pretendard', sans-serif; margin: 0; display: flex; height: 
     font-size: 0.95rem; font-weight: 600; color: #333; margin-top: 1.5rem; 
     margin-bottom: 0.5rem; padding: 0 ; line-height: 1.4 ; display: block ;
 }
-.content table + h1, .content table + h2, .content table + h3, .content table + h4, .content table + h5 {margin-top: 20px;}
+
+/* 다운로드 버튼 스타일 (수정됨) */
+.download-btn-hidden {
+    display: none;
+}
+.download-btn-visible {
+    display: block;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #ffffff;
+    border: 1px solid #cecdcd;
+    color: #555;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+.download-btn-visible:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
 
 /* Viewer */
 .viewer-panel { width: 0; background: #525659; position: relative; transition: 0.3s ease-in-out; }
