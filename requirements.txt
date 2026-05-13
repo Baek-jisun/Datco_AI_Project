@@ -1,3 +1,8 @@
+# Python Version: 3.12.9
+# OS: Windows (Visual Studio Build Tools required)
+# LLM: Ollama - hf.co/MLP-KTLim/llama-3-Korean-Bllossom-8B-gguf-Q4_K_M
+# Embedding: Ollama - mxbai-embed-large
+
 fastapi==0.115.0
 uvicorn==0.30.6
 python-multipart==0.0.12
