@@ -16,41 +16,36 @@ class RAGEngine:
         self.embeddings = OllamaEmbeddings(model="mxbai-embed-large")
 
     def setup_engine(self):
+        if self.compression_retriever is not None:
+            return self.compression_retriever
+
         if not os.path.exists(UPLOAD_DIR) or not os.listdir(UPLOAD_DIR):
             return None
+        
+        print(f"\n[시스템] '{self.embeddings.model}' 모델 기반 인덱싱을 시작합니다...")
         
         all_docs = []
         for filename in os.listdir(UPLOAD_DIR):
             if filename.endswith(".pdf"):
-                file_path = os.path.join(UPLOAD_DIR, filename)
                 try:
-                    with pdfplumber.open(file_path) as pdf:
+                    with pdfplumber.open(os.path.join(UPLOAD_DIR, filename)) as pdf:
                         for i, page in enumerate(pdf.pages):
                             text = page.extract_text()
                             if text:
-                                cleaned_content = clean_text(text)
                                 all_docs.append(Document(
-                                    page_content=cleaned_content,
+                                    page_content=clean_text(text),
                                     metadata={"source": filename, "page": i}
                                 ))
                     print(f"✅ {filename} 로드 완료")
                 except Exception as e:
-                    print(f"❌ {filename} 로드 실패: {str(e)}")
-                    continue
+                    print(f"❌ {filename} 실패: {e}")
 
-        if not all_docs:
-            return None
-        
-        splitter = RecursiveCharacterTextSplitter(
-            chunk_size=800, 
-            chunk_overlap=200, 
-            separators=["\n\n", "\n", ".", " ", ""]
-        )
+        splitter = RecursiveCharacterTextSplitter(chunk_size=1100, chunk_overlap=300)
         split_docs = splitter.split_documents(all_docs)
         
         vectorstore = Chroma(
             persist_directory=DB_PATH, 
-            embedding_function=self.embeddings, 
+            embedding_function=self.embeddings,
             client_settings=Settings(is_persistent=True, anonymized_telemetry=False)
         )
         
@@ -59,17 +54,14 @@ class RAGEngine:
         
         vector_r = vectorstore.as_retriever(
             search_type="mmr", 
-            search_kwargs={
-                "k": 15, 
-                "fetch_k": 40, 
-                "lambda_mult": 0.7
-            }
+            search_kwargs={"k": 15, "fetch_k": 40, "lambda_mult": 0.7}
         )
 
         self.compression_retriever = EnsembleRetriever(
             retrievers=[bm25, vector_r], 
-            weights=[0.55, 0.45] 
+            weights=[0.7, 0.3] 
         )
+        print("[시스템] 준비 완료!\n")
         return self.compression_retriever
 
 rag_engine = RAGEngine()

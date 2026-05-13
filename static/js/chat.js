@@ -10,9 +10,7 @@ async function loadFileList() {
             </div>
         `).join('');
         document.getElementById('usageDisplay').innerText = `${data.current_size}MB / ${data.max_size}MB`;
-    } catch (e) { 
-        console.error("파일 목록 로드 실패:", e); 
-    }
+    } catch (e) { console.error(e); }
 }
 
 async function deleteFile(event, filename) {
@@ -32,11 +30,8 @@ async function deleteFile(event, filename) {
     try {
         const res = await fetch(`/delete/${filename}`, { method: 'DELETE' });
         if (res.ok) await loadFileList();
-    } catch (e) { 
-        alert("삭제 중 오류가 발생했습니다."); 
-    } finally { 
-        if (statusMsg) statusMsg.style.display = 'none'; 
-    }
+    } catch (e) { alert("오류 발생"); }
+    finally { if (statusMsg) statusMsg.style.display = 'none'; }
 }
 
 function openViewer(n, p) {
@@ -49,9 +44,7 @@ function openViewer(n, p) {
     }, 50);
 }
 
-function closeViewer() { 
-    document.getElementById('viewerPanel').classList.remove('open'); 
-}
+function closeViewer() { document.getElementById('viewerPanel').classList.remove('open'); }
 
 async function uploadFile() {
     const fileInput = document.getElementById('hiddenFile');
@@ -72,39 +65,11 @@ async function uploadFile() {
     try {
         const response = await fetch('/upload', { method: 'POST', body: formData });
         if (response.ok) await loadFileList(); 
-    } catch (e) { 
-        alert("업로드 중 오류 발생"); 
-    } finally {
+    } catch (e) { alert("오류 발생"); }
+    finally {
         if (statusMsg) statusMsg.style.display = 'none';
         fileInput.value = ''; 
     }
-}
-
-function downloadAsTxt(question, answer, sources) {
-    let content = `[질문]\n${question}\n\n`;
-    content += `[AI 분석 결과]\n${answer.replace(/<[^>]*>?/gm, '')}\n\n`; 
-    content += `[참조된 문서 출처]\n`;
-    
-    if (sources && sources.length > 0) {
-        sources.forEach((s, i) => {
-            content += `${i + 1}. 파일명: ${s.file} (${s.page}페이지)\n`;
-            content += `   요약: ${s.snippet}\n\n`;
-        });
-    } else {
-        content += `참조된 출처가 없습니다.\n`;
-    }
-
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-    
-    a.href = url;
-    a.download = `AI_Response_${timestamp}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
 }
 
 async function askQuestion() {
@@ -123,14 +88,14 @@ async function askQuestion() {
     const answerBox = document.createElement('div');
     answerBox.className = 'answer-box';
     answerBox.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <div style="font-weight:bold; color:var(--accent);">AI 분석 결과:</div>
-            <button class="download-btn" style="display:none;">💾 다운로드 .txt</button>
-        </div>
+        <button class="download-btn-hidden">💾 메모장 저장</button>
+        <div style="font-weight:bold; color:var(--accent); margin-bottom:8px;">AI 분석 결과:</div>
         <div class="content"></div>
         <div class="source-container"></div>
     `;
     chat.appendChild(answerBox);
+    
+    const dlBtn = answerBox.querySelector('button'); 
     
     document.getElementById('loading').style.display = "block";
     if(sendBtn) {
@@ -148,16 +113,14 @@ async function askQuestion() {
         const response = await fetch("/ask", { method: "POST", body: fd });
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
-        
         let fullMarkdown = "";
-        let currentSources = [];
+        let sourcesRaw = [];
 
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
             const chunk = decoder.decode(value);
             const lines = chunk.split('\n');
-            
             for (let line of lines) {
                 if (line.startsWith('data: ')) {
                     const raw = line.substring(6).trim();
@@ -168,26 +131,40 @@ async function askQuestion() {
                             fullMarkdown += p.delta;
                             answerBox.querySelector('.content').innerHTML = marked.parse(fullMarkdown);
                         } else if (p.type === 'sources') {
-                            currentSources = p.data;
+                            sourcesRaw = p.data;
                             answerBox.querySelector('.source-container').innerHTML = `
                                 <div style="font-size:0.8rem; font-weight:bold; color:#666; margin-bottom:10px;">참조된 문서 출처:</div>
-                                ${currentSources.map(s => `
+                                ${p.data.map(s => `
                                     <div class="source-item" onclick="openViewer('${s.file}', ${s.page})">
                                         <span class="source-tag">📍 ${s.file} (p.${s.page})</span>
                                         <span class="source-snippet">"...${s.snippet}..."</span>
                                     </div>
                                 `).join('')}
                             `;
-
-                            const dlBtn = answerBox.querySelector('.download-btn');
-                            dlBtn.style.display = 'block';
-                            dlBtn.onclick = () => downloadAsTxt(q, fullMarkdown, currentSources);
                         }
                         chat.scrollTop = chat.scrollHeight;
                     } catch(e) {}
                 }
             }
         }
+
+        if (fullMarkdown.length > 0) {
+            dlBtn.className = 'download-btn-visible'; 
+            dlBtn.onclick = () => {
+                const pureAnswer = answerBox.querySelector('.content').innerText;
+                const sourcesText = sourcesRaw.map(s => `[출처] ${s.file} (p.${s.page})\n- 내용 요약: ${s.snippet}`).join('\n\n');
+                const fileContent = `▶ 질문: ${q}\n\n▶ AI 분석 답변:\n${pureAnswer}\n\n▶ 근거 문서 정보:\n${sourcesText}`;
+                
+                const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `AI_분석결과_${new Date().getTime()}.txt`;
+                link.click();
+                window.URL.revokeObjectURL(url);
+            };
+        }
+
     } catch (error) { 
         console.error(error); 
         answerBox.querySelector('.content').innerHTML = "<span style='color:red;'>답변을 가져오는 중 오류가 발생했습니다.</span>";

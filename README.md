@@ -14,7 +14,7 @@
 py -3.12 --version
 ```
 
-### 2. visual Studio Build Tools 설치  
+### 2. Visual Studio Build Tools 설치  
 
 #### 1. 공식 홈페이지 : https://visualstudio.microsoft.com/ko/downloads/ (하단에 Visual Studio 2026용 빌드 도구 다운로드)
 
@@ -26,7 +26,7 @@ py -3.12 --version
 
 ##### \- Windows 10(또는 11) SDK
 
-#### 4. 설치 완료 후 반드시 **다시 시작** 
+#### 4. 설치 완료 후 반드시 다시 시작
 
 ### 3. OLLAMA 및 LLM 모델 설치
 
@@ -76,9 +76,9 @@ pip install -r requirements.txt
 
 ### 5. 실행 방법 (CMD)
 
-#### 1. 프로젝트 폴더 내에서 **run.bat** 파일 실행
+#### 1. 프로젝트 폴더 내에서 run.bat 파일 실행 (Ollama가 실행되고 있어야 함)
 
-#### 2. 터미널에 출력되는 **로컬 주소**(예: http://127.0.0.1:xxxx) 를 브라우저에 입력하여 접속
+#### 2. 터미널에 출력되는 로컬 주소(예: http://127.0.0.1:xxxx) 를 브라우저에 입력하여 접속
 
 
 

@@ -28,6 +28,7 @@ def create_app():
         description="PDF 분석 및 RAG 기반 대화 시스템",
         lifespan=lifespan
     )
+    
     app.mount("/static", StaticFiles(directory="static"), name="static")
     app.mount("/pdf_files", StaticFiles(directory=UPLOAD_DIR), name="pdf_files")
     
