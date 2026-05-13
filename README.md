@@ -14,7 +14,7 @@
 py -3.12 --version
 ```
 
-### 2. visual Studio Build Tools 설치  
+### 2. Visual Studio Build Tools 설치  
 
 #### 1. 공식 홈페이지 : https://visualstudio.microsoft.com/ko/downloads/ (하단에 Visual Studio 2026용 빌드 도구 다운로드)
 
@@ -26,7 +26,7 @@ py -3.12 --version
 
 ##### \- Windows 10(또는 11) SDK
 
-#### 4. 설치 완료 후 반드시 **다시 시작** 
+#### 4. 설치 완료 후 반드시 다시 시작
 
 ### 3. OLLAMA 및 LLM 모델 설치
 
