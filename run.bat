@@ -1,3 +1,0 @@
-call .\venv\Scripts\activate
-uvicorn app:app --reload
-pause
